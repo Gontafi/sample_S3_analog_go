@@ -1,4 +1,4 @@
-package repository
+package core
 
 import (
 	"encoding/csv"
@@ -43,7 +43,7 @@ func GetBuckets() (*models.Buckets, error) {
 	if err == os.ErrNotExist {
 		_, f, err = createCSVWriter("./data/buckets.csv")
 		if err != nil {
-			return &models.Buckets{}, err
+			return nil, err
 		}
 	} else if err != nil {
 		return nil, err
@@ -74,4 +74,8 @@ func GetBuckets() (*models.Buckets, error) {
 	}
 
 	return &buckets, nil
+}
+
+func DeleteBucket(bucketName string) error {
+	return os.RemoveAll(fmt.Sprintf("./data/%s", bucketName))
 }

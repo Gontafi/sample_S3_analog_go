@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"encoding/xml"
+	"fmt"
 	"log"
 	"net/http"
-	"triple-storage/internal/repository"
+	"triple-storage/internal/core"
 	"triple-storage/utils"
 )
 
@@ -15,7 +16,7 @@ func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	ok, err := repository.HasBucketNameFromMetaData(bucketName)
+	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if ok {
 		w.WriteHeader(http.StatusConflict)
 		// w.write xml err
@@ -23,15 +24,15 @@ func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
 
-	err = repository.CreateBucket(bucketName)
+	err = core.CreateBucket(bucketName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -41,7 +42,7 @@ func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBucketsHandler(w http.ResponseWriter, r *http.Request) {
-	buckets, err := repository.GetBuckets()
+	buckets, err := core.GetBuckets()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
@@ -61,10 +62,10 @@ func GetBucketsHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 	bucketName := r.URL.Query().Get("BucketName")
 
-	ok, err := repository.HasBucketNameFromMetaData(bucketName)
+	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -74,6 +75,26 @@ func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// check obj meta
+	isEmpty, err := core.IsCSVEmpty(fmt.Sprintf("./data/%s/objects.csv", bucketName))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		log.Println(err)
+		return
+	}
+	if !isEmpty {
+		w.WriteHeader(http.StatusConflict)
+
+		return
+	}
+
+	err = core.DeleteBucket(bucketName)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		log.Println(err)
+		return
+	}
 	// change bucket meta
 	w.WriteHeader(http.StatusNoContent)
 }
