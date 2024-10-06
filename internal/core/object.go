@@ -15,17 +15,13 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 
 	var w *csv.Writer
 
-	f, err := os.Open(CSVpath)
-	if err == os.ErrNotExist {
-		w, f, err = createCSVWriter(CSVpath)
-		if err != nil {
-			return err
-		}
-	} else if err != nil {
+	f, err := os.OpenFile(CSVpath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
 		return err
 	}
-
 	defer f.Close()
+
+	w = csv.NewWriter(f)
 
 	writeCSVRecord(w, []string{objKey, size, contType, time.Now().String()})
 	w.Flush()
@@ -49,13 +45,7 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 
 func GetObjectMeta(bucketName, objKey string) (*models.Object, error) {
 	f, err := os.Open(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
-	if err == os.ErrNotExist {
-		_, f, err = createCSVWriter(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
-		if err != nil {
-			return nil, err
-		}
-
-	} else if err != nil {
+	if err != nil {
 		return nil, err
 	}
 

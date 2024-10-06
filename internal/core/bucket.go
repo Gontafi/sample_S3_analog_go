@@ -11,26 +11,29 @@ import (
 )
 
 func CreateBucket(bucketName string) error {
-	err := os.MkdirAll(fmt.Sprintf("./%s/%s", utils.Directory, bucketName), os.ModePerm)
+	bucketPath := fmt.Sprintf("./%s/%s", utils.Directory, bucketName)
+	err := os.MkdirAll(bucketPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
+	csvFilePath := fmt.Sprintf("./%s/buckets.csv", utils.Directory)
 	var w *csv.Writer
+	var f *os.File
 
-	f, err := os.Open(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
-	if err == os.ErrNotExist {
-		w, f, err = createCSVWriter(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
-		if err != nil {
-			return err
-		}
-	} else if err != nil {
+	f, err = os.OpenFile(csvFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	w = csv.NewWriter(f)
+
+	record := []string{bucketName, time.Now().String(), time.Now().String(), "active"}
+	if err := writeCSVRecord(w, record); err != nil {
 		return err
 	}
 
-	defer f.Close()
-
-	writeCSVRecord(w, []string{bucketName, time.Now().String(), time.Now().String(), "active"})
 	w.Flush()
 	if err := w.Error(); err != nil {
 		return err
@@ -41,12 +44,7 @@ func CreateBucket(bucketName string) error {
 
 func GetBuckets() (*models.Buckets, error) {
 	f, err := os.Open(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
-	if err == os.ErrNotExist {
-		_, f, err = createCSVWriter(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
-		if err != nil {
-			return nil, err
-		}
-	} else if err != nil {
+	if err != nil {
 		return nil, err
 	}
 

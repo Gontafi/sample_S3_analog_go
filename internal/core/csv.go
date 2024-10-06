@@ -14,20 +14,8 @@ import (
 
 var ErrUniqueName = errors.New("bucket name should be unique")
 
-func createCSVWriter(filename string) (*csv.Writer, *os.File, error) {
-	f, err := os.Create(filename)
-	if err != nil {
-		return nil, nil, err
-	}
-	writer := csv.NewWriter(f)
-	return writer, f, nil
-}
-
-func writeCSVRecord(writer *csv.Writer, record []string) {
-	err := writer.Write(record)
-	if err != nil {
-		fmt.Println("Error writing record to CSV:", err)
-	}
+func writeCSVRecord(writer *csv.Writer, record []string) error {
+	return writer.Write(record)
 }
 
 func IsCSVEmpty(filePath string) (bool, error) {
@@ -77,34 +65,33 @@ func searchKeyInCSV(f *os.File, key string) (bool, error) {
 }
 
 func HasBucketNameFromMetaData(name string) (bool, error) {
-	file, err := os.Open(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
-	if err == os.ErrNotExist {
-		_, f, err := createCSVWriter(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
+	bucketDir := fmt.Sprintf("./%s", utils.Directory)
+	bucketFilePath := fmt.Sprintf("%s/buckets.csv", bucketDir)
+
+	if _, err := os.Stat(bucketDir); os.IsNotExist(err) {
+		err := os.MkdirAll(bucketDir, 0755)
 		if err != nil {
 			return false, err
 		}
-		defer f.Close()
-
-		return false, nil
-	} else if err != nil {
-		return false, err
 	}
 
+	// Open the file
+	file, err := os.OpenFile(bucketFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		return false, err
+	}
 	defer file.Close()
 
 	return searchKeyInCSV(file, name)
 }
 
 func HasObjkeyInMeta(bucketname, objKey string) (bool, error) {
-	file, err := os.Open(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketname))
+	path := fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketname)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
-		_, f, err := createCSVWriter(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketname))
-		if err != nil {
-			return false, err
-		}
-		defer f.Close()
 		return false, err
 	}
+
 	defer file.Close()
 
 	return searchKeyInCSV(file, objKey)
