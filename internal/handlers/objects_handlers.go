@@ -6,13 +6,15 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 	"triple-storage/internal/core"
 )
 
 func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
-	bucketName := r.URL.Query().Get("BucketName")
-	objKey := r.URL.Query().Get("ObjectKey")
+	parts := strings.Split(r.URL.Path, "/")
+	bucketName := parts[1]
+	objKey := parts[2]
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
@@ -60,8 +62,9 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
-	bucketName := r.URL.Query().Get("BucketName")
-	objKey := r.URL.Query().Get("ObjectKey")
+	parts := strings.Split(r.URL.Path, "/")
+	bucketName := parts[1]
+	objKey := parts[2]
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
@@ -120,8 +123,9 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
-	bucketName := r.URL.Query().Get("BucketName")
-	objKey := r.URL.Query().Get("ObjectKey")
+	parts := strings.Split(r.URL.Path, "/")
+	bucketName := parts[1]
+	objKey := parts[2]
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {

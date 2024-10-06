@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"triple-storage/internal/core"
 	"triple-storage/utils"
 )
 
 func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
-	bucketName := r.URL.Query().Get("BucketName")
-
+	parts := strings.Split(r.URL.Path, "/")
+	bucketName := parts[1]
 	if !utils.IsValidBucketName(bucketName) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -60,7 +61,8 @@ func GetBucketsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
-	bucketName := r.URL.Query().Get("BucketName")
+	parts := strings.Split(r.URL.Path, "/")
+	bucketName := parts[1]
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
@@ -75,7 +77,7 @@ func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// check obj meta
-	isEmpty, err := core.IsCSVEmpty(fmt.Sprintf("./data/%s/objects.csv", bucketName))
+	isEmpty, err := core.IsCSVEmpty(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 
