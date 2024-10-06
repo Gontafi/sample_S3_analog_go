@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"triple-storage/utils"
 )
 
 var ErrUniqueName = errors.New("bucket name should be unique")
@@ -76,9 +77,9 @@ func searchKeyInCSV(f *os.File, key string) (bool, error) {
 }
 
 func HasBucketNameFromMetaData(name string) (bool, error) {
-	file, err := os.Open("./data/buckets.csv")
+	file, err := os.Open(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
 	if err == os.ErrNotExist {
-		_, f, err := createCSVWriter("./data/buckets.csv")
+		_, f, err := createCSVWriter(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
 		if err != nil {
 			return false, err
 		}
@@ -95,9 +96,9 @@ func HasBucketNameFromMetaData(name string) (bool, error) {
 }
 
 func HasObjkeyInMeta(bucketname, objKey string) (bool, error) {
-	file, err := os.Open(fmt.Sprintf("./data/%s/objects.csv", bucketname))
+	file, err := os.Open(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketname))
 	if err != nil {
-		_, f, err := createCSVWriter(fmt.Sprintf("./data/%s/objects.csv", bucketname))
+		_, f, err := createCSVWriter(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketname))
 		if err != nil {
 			return false, err
 		}

@@ -17,7 +17,7 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -33,7 +33,7 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 	size, err := strconv.ParseInt(contLength, 10, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -43,7 +43,7 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 	_, err = r.Body.Read(data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -51,7 +51,7 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 	err = core.AddObject(bucketName, objKey, contLength, contType, r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -66,7 +66,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -79,7 +79,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 	ok, err = core.HasObjkeyInMeta(bucketName, objKey)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -92,7 +92,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 	obj, err := core.GetObjectMeta(bucketName, objKey)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -126,7 +126,7 @@ func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -139,7 +139,7 @@ func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
 	ok, err = core.HasObjkeyInMeta(bucketName, objKey)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}
@@ -152,7 +152,7 @@ func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
 	err = core.DeleteObject(bucketName, objKey)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		// some xml err
+
 		log.Println(err)
 		return
 	}

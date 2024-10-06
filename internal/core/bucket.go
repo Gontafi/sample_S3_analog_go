@@ -7,19 +7,20 @@ import (
 	"os"
 	"time"
 	"triple-storage/internal/models"
+	"triple-storage/utils"
 )
 
 func CreateBucket(bucketName string) error {
-	err := os.MkdirAll(fmt.Sprintf("./data/%s", bucketName), os.ModePerm)
+	err := os.MkdirAll(fmt.Sprintf("./%s/%s", utils.Directory, bucketName), os.ModePerm)
 	if err != nil {
 		return err
 	}
 
 	var w *csv.Writer
 
-	f, err := os.Open("./data/buckets.csv")
+	f, err := os.Open(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
 	if err == os.ErrNotExist {
-		w, f, err = createCSVWriter("./data/buckets.csv")
+		w, f, err = createCSVWriter(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
 		if err != nil {
 			return err
 		}
@@ -39,9 +40,9 @@ func CreateBucket(bucketName string) error {
 }
 
 func GetBuckets() (*models.Buckets, error) {
-	f, err := os.Open("./data/buckets.csv")
+	f, err := os.Open(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
 	if err == os.ErrNotExist {
-		_, f, err = createCSVWriter("./data/buckets.csv")
+		_, f, err = createCSVWriter(fmt.Sprintf("./%s/buckets.csv", utils.Directory))
 		if err != nil {
 			return nil, err
 		}
@@ -77,5 +78,5 @@ func GetBuckets() (*models.Buckets, error) {
 }
 
 func DeleteBucket(bucketName string) error {
-	return os.RemoveAll(fmt.Sprintf("./data/%s", bucketName))
+	return os.RemoveAll(fmt.Sprintf("./%s/%s", bucketName, utils.Directory))
 }

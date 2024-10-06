@@ -7,10 +7,11 @@ import (
 	"os"
 	"time"
 	"triple-storage/internal/models"
+	"triple-storage/utils"
 )
 
 func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) error {
-	CSVpath := fmt.Sprintf("./data/%s/objects.csv", bucketName)
+	CSVpath := fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName)
 
 	var w *csv.Writer
 
@@ -32,7 +33,7 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 		return err
 	}
 
-	newFile, err := os.Create(fmt.Sprintf("./data/%s/%s", bucketName, objKey))
+	newFile, err := os.Create(fmt.Sprintf("./%s/%s/%s", utils.Directory, bucketName, objKey))
 	if err != nil {
 		return err
 	}
@@ -47,9 +48,9 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 }
 
 func GetObjectMeta(bucketName, objKey string) (*models.Object, error) {
-	f, err := os.Open(fmt.Sprintf("./data/%s/objects.csv", bucketName))
+	f, err := os.Open(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
 	if err == os.ErrNotExist {
-		_, f, err = createCSVWriter(fmt.Sprintf("./data/%s/objects.csv", bucketName))
+		_, f, err = createCSVWriter(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
 		if err != nil {
 			return nil, err
 		}
@@ -84,12 +85,12 @@ func GetObjectMeta(bucketName, objKey string) (*models.Object, error) {
 }
 
 func DeleteObject(bucketName, objKey string) error {
-	err := os.Remove(fmt.Sprint("./data/%s/%s", bucketName, objKey))
+	err := os.Remove(fmt.Sprint("./%s/%s/%s", utils.Directory, bucketName, objKey))
 	if err != nil {
 		return err
 	}
 
-	err = DeleteRowInCSV(objKey, fmt.Sprint("./data/%s/objects.csv", bucketName))
+	err = DeleteRowInCSV(objKey, fmt.Sprint("./%s/%s/objects.csv", utils.Directory, bucketName))
 	if err != nil {
 		return err
 	}
