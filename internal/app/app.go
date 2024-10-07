@@ -3,7 +3,7 @@ package app
 import (
 	"fmt"
 	"net/http"
-
+	"triple-storage/internal/core"
 	"triple-storage/internal/handlers"
 )
 
@@ -20,6 +20,10 @@ func RunApp(port string) error {
 
 	if port == "" {
 		port = "8080"
+	}
+
+	if err := core.InitDir(); err != nil {
+		return err
 	}
 
 	fmt.Println("server started on port:", port)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
 	"triple-storage/internal/core"
 	"triple-storage/internal/models"
 	"triple-storage/utils"
@@ -34,7 +33,6 @@ func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	// w.Write() success
 }
 
 func GetBucketsHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,12 +63,16 @@ func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
-	// check obj meta
 	isEmpty, err := core.IsCSVEmpty(fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
 	if check(err, w) {
 		return
 	}
 	if !isEmpty {
+		err = core.UpdateRowInCSV(bucketName, fmt.Sprintf("./%s/buckets.csv", utils.Directory), []string{"", "", utils.CurrentTime(), "marked for delition"})
+		if check(err, w) {
+			return
+		}
+
 		check(core.ErrBucketIsNotEmpty, w, http.StatusConflict)
 		return
 	}
@@ -79,6 +81,6 @@ func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 	if check(err, w) {
 		return
 	}
-	// change bucket meta
+
 	w.WriteHeader(http.StatusNoContent)
 }

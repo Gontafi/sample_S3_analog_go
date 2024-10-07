@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"time"
 	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
@@ -45,7 +44,7 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 			return err
 		}
 	}
-	writeCSVRecord(w, []string{objKey, size, contType, time.Now().String()})
+	writeCSVRecord(w, []string{objKey, size, contType, utils.CurrentTime()})
 	w.Flush()
 	if err := w.Error(); err != nil {
 		return err

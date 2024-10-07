@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"time"
 	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
@@ -40,7 +39,7 @@ func CreateBucket(bucketName string) error {
 		}
 	}
 
-	record := []string{bucketName, time.Now().String(), time.Now().String(), "active"}
+	record := []string{bucketName, utils.CurrentTime(), utils.CurrentTime(), "active"}
 	if err := writeCSVRecord(w, record); err != nil {
 		return err
 	}
@@ -109,8 +108,9 @@ func GetBuckets() (*models.Buckets, error) {
 			})
 		}
 	}
-
-	buckets.Bucket = buckets.Bucket[1:]
+	if len(buckets.Bucket) > 1 {
+		buckets.Bucket = buckets.Bucket[1:]
+	}
 
 	return &buckets, nil
 }

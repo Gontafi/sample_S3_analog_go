@@ -36,6 +36,11 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = core.UpdateRowInCSV(bucketName, fmt.Sprintf("./%s/buckets.csv", utils.Directory), []string{"", "", utils.CurrentTime(), ""})
+	if check(err, w) {
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -112,5 +117,11 @@ func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
 	if check(err, w) {
 		return
 	}
+
+	err = core.UpdateRowInCSV(bucketName, fmt.Sprintf("./%s/buckets.csv", utils.Directory), []string{"", "", utils.CurrentTime(), ""})
+	if check(err, w) {
+		return
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 }

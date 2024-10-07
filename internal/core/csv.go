@@ -10,13 +10,13 @@ import (
 	"log"
 	"os"
 	"strings"
-
 	"triple-storage/utils"
 )
 
 var (
-	ErrUniqueName       = errors.New("bucket name should be unique")
-	ErrBucketIsNotEmpty = errors.New("current bucket is not empty")
+	ErrUniqueName          = errors.New("bucket name should be unique")
+	ErrBucketIsNotEmpty    = errors.New("current bucket is not empty")
+	ErrInvalidLengthCSVRow = errors.New("invalid length csv rows")
 )
 
 func writeCSVRecord(writer *csv.Writer, record []string) error {
@@ -119,6 +119,57 @@ func DeleteRowInCSV(name, csvPath string) error {
 			if err != nil {
 				return err
 			}
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	err = os.WriteFile(csvPath, buf.Bytes(), 0o666)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateRowInCSV(name, csvPath string, record []string) error {
+	f, err := os.Open(csvPath)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	var bs []byte
+	buf := bytes.NewBuffer(bs)
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		rec := strings.Split(scanner.Text(), ",")
+		if rec[0] == name {
+			if len(rec) != len(record) {
+				return ErrInvalidLengthCSVRow
+			}
+			for i, v := range record {
+				if v != "" {
+					rec[i] = record[i]
+				}
+			}
+
+			_, err := buf.WriteString(strings.Join(rec, ","))
+			if err != nil {
+				return err
+			}
+		} else {
+			_, err := buf.Write(scanner.Bytes())
+			if err != nil {
+				return err
+			}
+		}
+		_, err = buf.WriteString("\n")
+		if err != nil {
+			return err
 		}
 	}
 	if err := scanner.Err(); err != nil {
