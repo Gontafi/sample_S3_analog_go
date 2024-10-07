@@ -23,8 +23,8 @@ func check(err error, w http.ResponseWriter, code ...int) bool {
 				Message: err.Error(),
 			},
 		}, " ", " ")
-		if check(err, w) {
-			log.Fatal(err)
+		if err != nil {
+			log.Println(err)
 		}
 
 		w.WriteHeader(code[0])

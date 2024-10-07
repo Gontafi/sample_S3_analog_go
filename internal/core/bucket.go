@@ -29,6 +29,17 @@ func CreateBucket(bucketName string) error {
 
 	w = csv.NewWriter(f)
 
+	fi, err := os.Stat(csvFilePath)
+	if err != nil {
+		return err
+	}
+
+	if fi.Size() == 0 {
+		if err := writeColumnsForBucketMeta(w); err != nil {
+			return err
+		}
+	}
+
 	record := []string{bucketName, time.Now().String(), time.Now().String(), "active"}
 	if err := writeCSVRecord(w, record); err != nil {
 		return err
@@ -45,6 +56,24 @@ func CreateBucket(bucketName string) error {
 	}
 
 	defer objCSVFile.Close()
+
+	fi, err = os.Stat(fmt.Sprintf("%s/objects.csv", bucketPath))
+	if err != nil {
+		return err
+	}
+
+	w = csv.NewWriter(objCSVFile)
+
+	if fi.Size() == 0 {
+		if err := writeColumnsForObjMeta(w); err != nil {
+			return err
+		}
+	}
+
+	w.Flush()
+	if err := w.Error(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -78,6 +107,8 @@ func GetBuckets() (*models.Buckets, error) {
 			})
 		}
 	}
+
+	buckets.Bucket = buckets.Bucket[1:]
 
 	return &buckets, nil
 }

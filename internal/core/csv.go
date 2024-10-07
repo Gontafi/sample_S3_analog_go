@@ -18,6 +18,14 @@ func writeCSVRecord(writer *csv.Writer, record []string) error {
 	return writer.Write(record)
 }
 
+func writeColumnsForBucketMeta(writer *csv.Writer) error {
+	return writer.Write([]string{"Name", "CreationTime", "LastModifiedTime", "Status"})
+}
+
+func writeColumnsForObjMeta(writer *csv.Writer) error {
+	return writer.Write([]string{"ObjectKey", "Size", "ContentType", "LastModified"})
+}
+
 func IsCSVEmpty(filePath string) (bool, error) {
 	file, err := os.Open(filePath)
 	if err != nil {

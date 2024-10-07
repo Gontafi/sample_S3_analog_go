@@ -23,6 +23,17 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 
 	w = csv.NewWriter(f)
 
+	fi, err := os.Stat(CSVpath)
+	if err != nil {
+		return err
+	}
+
+	if fi.Size() == 0 {
+		if err := writeColumnsForObjMeta(w); err != nil {
+			return err
+		}
+	}
+
 	writeCSVRecord(w, []string{objKey, size, contType, time.Now().String()})
 	w.Flush()
 	if err := w.Error(); err != nil {
