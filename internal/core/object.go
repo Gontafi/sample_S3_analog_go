@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"time"
-
 	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
@@ -35,6 +34,17 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 		}
 	}
 
+	ok, err := HasObjkeyInMeta(bucketName, objKey)
+	if err != nil {
+		return err
+	}
+
+	if ok {
+		err = DeleteRowInCSV(objKey, fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
+		if err != nil {
+			return err
+		}
+	}
 	writeCSVRecord(w, []string{objKey, size, contType, time.Now().String()})
 	w.Flush()
 	if err := w.Error(); err != nil {

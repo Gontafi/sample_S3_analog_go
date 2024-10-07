@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
-
 	"triple-storage/internal/core"
 	"triple-storage/utils"
 )
@@ -32,18 +30,6 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 
 	contType := r.Header.Get("Content-Type")
 	contLength := r.Header.Get("Content-Length")
-
-	size, err := strconv.ParseInt(contLength, 10, 64)
-	if check(err, w) {
-		return
-	}
-
-	data := make([]byte, 0, size)
-
-	_, err = r.Body.Read(data)
-	if check(err, w) {
-		return
-	}
 
 	err = core.AddObject(bucketName, objKey, contLength, contType, r.Body)
 	if check(err, w) {

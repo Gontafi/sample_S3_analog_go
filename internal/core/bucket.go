@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"time"
-
 	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
@@ -101,10 +100,12 @@ func GetBuckets() (*models.Buckets, error) {
 			return nil, err
 		}
 
-		if len(rec) > 2 {
+		if len(rec) > 3 {
 			buckets.Bucket = append(buckets.Bucket, models.Bucket{
-				Name:         rec[0],
-				CreationDate: rec[1],
+				Name:             rec[0],
+				CreationDate:     rec[1],
+				LastModifiedTime: rec[2],
+				Status:           rec[3],
 			})
 		}
 	}

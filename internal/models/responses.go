@@ -12,8 +12,10 @@ type Buckets struct {
 }
 
 type Bucket struct {
-	CreationDate string `xml:"CreationDate"`
-	Name         string `xml:"Name"`
+	CreationDate     string `xml:"CreationDate"`
+	Name             string `xml:"Name"`
+	LastModifiedTime string `xml:"LastModifiedTime"`
+	Status           string `xml:"Status"`
 }
 
 type Error struct {
