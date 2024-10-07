@@ -114,5 +114,9 @@ func GetBuckets() (*models.Buckets, error) {
 }
 
 func DeleteBucket(bucketName string) error {
-	return os.RemoveAll(fmt.Sprintf("./%s/%s", bucketName, utils.Directory))
+	err := DeleteRowInCSV(bucketName, fmt.Sprintf("./%s/buckets.csv", utils.Directory))
+	if err != nil {
+		return err
+	}
+	return os.RemoveAll(fmt.Sprintf("./%s/%s", utils.Directory, bucketName))
 }

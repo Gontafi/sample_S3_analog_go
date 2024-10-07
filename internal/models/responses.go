@@ -16,9 +16,7 @@ type Bucket struct {
 	Name         string `xml:"Name"`
 }
 
-type ErrResponse struct {
-	Error struct {
-		Code    int    `xml:"Code"`
-		Message string `xml:"Message"`
-	} `xml:"Error"`
+type Error struct {
+	Code    int    `xml:"Code"`
+	Message string `xml:"Message"`
 }

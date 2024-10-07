@@ -25,8 +25,7 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		// w.write xml err
+		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
 
@@ -63,8 +62,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		// w.write xml err
+		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
 
@@ -73,8 +71,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		// w.write xml err
+		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
 
@@ -89,7 +86,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := os.Open(fmt.Sprintf("./data/%s/%s", bucketName, obj.Name))
+	file, err := os.Open(fmt.Sprintf("./data/%s/%s", bucketName, objKey))
 	if check(err, w) {
 		return
 	}
@@ -111,8 +108,7 @@ func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		// w.write xml err
+		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
 
@@ -121,8 +117,7 @@ func DeleteObjectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		// w.write xml err
+		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
 

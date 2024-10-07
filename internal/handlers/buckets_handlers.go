@@ -20,8 +20,7 @@ func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if ok {
-		w.WriteHeader(http.StatusConflict)
-		// w.write xml err
+		check(core.ErrUniqueName, w, http.StatusConflict)
 		return
 	}
 	if check(err, w) {
@@ -62,8 +61,7 @@ func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		// w.write xml err
+		check(utils.ErrNotFound, w, http.StatusNotFound)
 		return
 	}
 	// check obj meta
@@ -72,8 +70,7 @@ func DeleteBucketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !isEmpty {
-		w.WriteHeader(http.StatusConflict)
-
+		check(core.ErrBucketIsNotEmpty, w, http.StatusConflict)
 		return
 	}
 

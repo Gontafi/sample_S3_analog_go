@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"bytes"
 	"errors"
+	"io"
 	"regexp"
 	"strings"
 )
@@ -26,6 +28,7 @@ const validNamePattern = `^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9]|(?:[a-z0-9]{1,61}(\
 var (
 	ErrNameLength = errors.New("name length must be 3-63")
 	ErrValidate   = errors.New("invalid naming")
+	ErrNotFound   = errors.New("not found")
 )
 
 func IsValidBucketName(name string) error {
@@ -46,4 +49,23 @@ func IsValidBucketName(name string) error {
 	}
 
 	return nil
+}
+
+func LineCounter(r io.Reader) (int, error) {
+	buf := make([]byte, 32*1024)
+	count := 0
+	lineSep := []byte{'\n'}
+
+	for {
+		c, err := r.Read(buf)
+		count += bytes.Count(buf[:c], lineSep)
+
+		switch {
+		case err == io.EOF:
+			return count, nil
+
+		case err != nil:
+			return count, err
+		}
+	}
 }

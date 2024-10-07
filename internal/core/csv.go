@@ -7,12 +7,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 	"triple-storage/utils"
 )
 
-var ErrUniqueName = errors.New("bucket name should be unique")
+var (
+	ErrUniqueName       = errors.New("bucket name should be unique")
+	ErrBucketIsNotEmpty = errors.New("current bucket is not empty")
+)
 
 func writeCSVRecord(writer *csv.Writer, record []string) error {
 	return writer.Write(record)
@@ -33,24 +37,12 @@ func IsCSVEmpty(filePath string) (bool, error) {
 	}
 	defer file.Close()
 
-	fi, err := file.Stat()
+	cnt, err := utils.LineCounter(file)
 	if err != nil {
-		return false, err
-	}
-	if fi.Size() == 0 {
-		return true, nil
+		log.Println(err)
 	}
 
-	reader := csv.NewReader(file)
-
-	record, err := reader.Read()
-	if err == csv.ErrFieldCount {
-		return true, nil
-	} else if err != nil {
-		return false, err
-	}
-
-	return len(record) == 0, nil
+	return cnt < 2, nil
 }
 
 func searchKeyInCSV(f *os.File, key string) (bool, error) {

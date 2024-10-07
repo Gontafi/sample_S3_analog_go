@@ -63,7 +63,7 @@ func GetObjectMeta(bucketName, objKey string) (*models.Object, error) {
 	defer f.Close()
 
 	r := csv.NewReader(f)
-
+	first := true
 	for {
 		rec, err := r.Read()
 		if err == io.EOF {
@@ -73,7 +73,11 @@ func GetObjectMeta(bucketName, objKey string) (*models.Object, error) {
 			return nil, err
 		}
 
-		if len(rec) > 3 {
+		if first {
+			first = false
+			continue
+		}
+		if len(rec) > 3 && rec[0] == objKey {
 			return &models.Object{
 				Name:          rec[0],
 				ContentLength: rec[1],
