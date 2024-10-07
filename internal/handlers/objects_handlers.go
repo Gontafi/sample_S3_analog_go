@@ -8,12 +8,19 @@ import (
 	"strings"
 	"time"
 	"triple-storage/internal/core"
+	"triple-storage/utils"
 )
 
 func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	bucketName := parts[1]
 	objKey := parts[2]
+
+	if !utils.IsValidBucketName(objKey) {
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
 	if check(err, w) {
