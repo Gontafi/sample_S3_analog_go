@@ -58,15 +58,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://{{host}}:{{port}}/test/file.pdf",
+							"raw": "http://{{host}}:{{port}}/pizza/pizza.jpeg",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
-								"file.pdf"
+								"pizza",
+								"pizza.jpeg"
 							]
 						}
 					},
