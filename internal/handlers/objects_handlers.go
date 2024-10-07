@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -74,8 +75,7 @@ func GetObjectsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if obj == nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		// w.write xml err
+		check(errors.New("object is nil"), w)
 		return
 	}
 
