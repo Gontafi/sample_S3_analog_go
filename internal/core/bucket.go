@@ -39,6 +39,13 @@ func CreateBucket(bucketName string) error {
 		return err
 	}
 
+	objCSVFile, err := os.OpenFile(fmt.Sprintf("%s/objects.csv", bucketPath), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		return err
+	}
+
+	defer objCSVFile.Close()
+
 	return nil
 }
 

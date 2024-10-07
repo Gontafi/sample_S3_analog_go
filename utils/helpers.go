@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-const validNamePattern = `^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9]|(?:[a-z0-9]{1,61}(\.[a-z0-9]{1,61})*))[a-z0-9]$`
-
 var (
 	ErrInvalidBucketName = "invalid match"
 	Directory            = "data"
@@ -21,6 +19,8 @@ var (
 - --port N   Port number
 - --dir S    Path to the directory`
 )
+
+const validNamePattern = `^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9]|(?:[a-z0-9]{1,61}(\.[a-z0-9]{1,61})*))[a-z0-9]$`
 
 func IsValidBucketName(name string) bool {
 	if len(name) < 3 || len(name) > 63 {

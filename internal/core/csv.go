@@ -75,7 +75,6 @@ func HasBucketNameFromMetaData(name string) (bool, error) {
 		}
 	}
 
-	// Open the file
 	file, err := os.OpenFile(bucketFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		return false, err
