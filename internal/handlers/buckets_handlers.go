@@ -6,14 +6,16 @@ import (
 	"net/http"
 	"strings"
 	"triple-storage/internal/core"
+	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
 
 func PutBucketHandler(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	bucketName := parts[1]
-	if !utils.IsValidBucketName(bucketName) {
-		w.WriteHeader(http.StatusBadRequest)
+
+	if check(utils.IsValidBucketName(bucketName), w, http.StatusBadRequest) {
+		return
 	}
 
 	ok, err := core.HasBucketNameFromMetaData(bucketName)
@@ -40,7 +42,10 @@ func GetBucketsHandler(w http.ResponseWriter, r *http.Request) {
 	if check(err, w) {
 		return
 	}
-	xmlText, err := xml.MarshalIndent(buckets, " ", " ")
+	xmlText, err := xml.MarshalIndent(models.ListAllMyBucketsResult{
+		XMLName: xml.Name{},
+		Buckets: *buckets,
+	}, " ", " ")
 	if check(err, w) {
 		return
 	}

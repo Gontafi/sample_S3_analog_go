@@ -75,12 +75,12 @@ func GetObjectMeta(bucketName, objKey string) (*models.Object, error) {
 }
 
 func DeleteObject(bucketName, objKey string) error {
-	err := os.Remove(fmt.Sprint("./%s/%s/%s", utils.Directory, bucketName, objKey))
+	err := os.Remove(fmt.Sprintf("./%s/%s/%s", utils.Directory, bucketName, objKey))
 	if err != nil {
 		return err
 	}
 
-	err = DeleteRowInCSV(objKey, fmt.Sprint("./%s/%s/objects.csv", utils.Directory, bucketName))
+	err = DeleteRowInCSV(objKey, fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketName))
 	if err != nil {
 		return err
 	}

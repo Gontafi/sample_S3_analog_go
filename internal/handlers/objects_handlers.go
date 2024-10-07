@@ -16,9 +16,7 @@ func PutObjectHandler(w http.ResponseWriter, r *http.Request) {
 	bucketName := parts[1]
 	objKey := parts[2]
 
-	if !utils.IsValidBucketName(objKey) {
-		w.WriteHeader(http.StatusBadRequest)
-
+	if check(utils.IsValidBucketName(bucketName), w, http.StatusBadRequest) {
 		return
 	}
 

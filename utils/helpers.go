@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"regexp"
 	"strings"
 )
@@ -22,22 +23,27 @@ var (
 
 const validNamePattern = `^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9]|(?:[a-z0-9]{1,61}(\.[a-z0-9]{1,61})*))[a-z0-9]$`
 
-func IsValidBucketName(name string) bool {
+var (
+	ErrNameLength = errors.New("name length must be 3-63")
+	ErrValidate   = errors.New("invalid naming")
+)
+
+func IsValidBucketName(name string) error {
 	if len(name) < 3 || len(name) > 63 {
-		return false
+		return ErrNameLength
 	}
 
 	re := regexp.MustCompile(validNamePattern)
 	if !re.MatchString(name) {
-		return false
+		return ErrValidate
 	}
 
 	parts := strings.Split(name, ".")
 	for _, part := range parts {
 		if strings.Contains(part, "--") {
-			return false
+			return ErrValidate
 		}
 	}
 
-	return true
+	return nil
 }

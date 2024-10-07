@@ -14,7 +14,7 @@ func RunApp(port string) error {
 
 	// object handlers
 	http.HandleFunc("PUT /{BucketName}/{ObjectKey}", handlers.PutObjectHandler)
-	http.HandleFunc("GET /{BucketName}", handlers.GetObjectsHandler)
+	http.HandleFunc("GET /{BucketName}/{ObjectKey}", handlers.GetObjectsHandler)
 	http.HandleFunc("DELETE /{BucketName}/{ObjectKey}", handlers.DeleteObjectHandler)
 
 	if port == "" {

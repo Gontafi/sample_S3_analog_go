@@ -5,7 +5,6 @@ import "encoding/xml"
 type ListAllMyBucketsResult struct {
 	XMLName xml.Name `xml:"ListAllMyBucketsResult"`
 	Buckets Buckets  `xml:"Buckets"`
-	Owner   Owner    `xml:"Owner"`
 }
 
 type Buckets struct {
@@ -17,7 +16,9 @@ type Bucket struct {
 	Name         string `xml:"Name"`
 }
 
-type Owner struct {
-	DisplayName string `xml:"DisplayName"`
-	ID          string `xml:"ID"`
+type ErrResponse struct {
+	Error struct {
+		Code    int    `xml:"Code"`
+		Message string `xml:"Message"`
+	} `xml:"Error"`
 }
