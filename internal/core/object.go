@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"time"
+
 	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
@@ -15,7 +16,7 @@ func AddObject(bucketName, objKey, size, contType string, data io.ReadCloser) er
 
 	var w *csv.Writer
 
-	f, err := os.OpenFile(CSVpath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	f, err := os.OpenFile(CSVpath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		return err
 	}

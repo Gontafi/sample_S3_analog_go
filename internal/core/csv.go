@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"strings"
+
 	"triple-storage/utils"
 )
 
@@ -69,13 +70,13 @@ func HasBucketNameFromMetaData(name string) (bool, error) {
 	bucketFilePath := fmt.Sprintf("%s/buckets.csv", bucketDir)
 
 	if _, err := os.Stat(bucketDir); os.IsNotExist(err) {
-		err := os.MkdirAll(bucketDir, 0755)
+		err := os.MkdirAll(bucketDir, 0o755)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	file, err := os.OpenFile(bucketFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	file, err := os.OpenFile(bucketFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		return false, err
 	}
@@ -86,7 +87,7 @@ func HasBucketNameFromMetaData(name string) (bool, error) {
 
 func HasObjkeyInMeta(bucketname, objKey string) (bool, error) {
 	path := fmt.Sprintf("./%s/%s/objects.csv", utils.Directory, bucketname)
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		return false, err
 	}
@@ -124,7 +125,7 @@ func DeleteRowInCSV(name, csvPath string) error {
 		return err
 	}
 
-	err = os.WriteFile(csvPath, buf.Bytes(), 0666)
+	err = os.WriteFile(csvPath, buf.Bytes(), 0o666)
 	if err != nil {
 		return err
 	}

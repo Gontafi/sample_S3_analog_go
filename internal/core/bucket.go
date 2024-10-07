@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"time"
+
 	"triple-storage/internal/models"
 	"triple-storage/utils"
 )
@@ -21,7 +22,7 @@ func CreateBucket(bucketName string) error {
 	var w *csv.Writer
 	var f *os.File
 
-	f, err = os.OpenFile(csvFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	f, err = os.OpenFile(csvFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		return err
 	}
@@ -50,7 +51,7 @@ func CreateBucket(bucketName string) error {
 		return err
 	}
 
-	objCSVFile, err := os.OpenFile(fmt.Sprintf("%s/objects.csv", bucketPath), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	objCSVFile, err := os.OpenFile(fmt.Sprintf("%s/objects.csv", bucketPath), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		return err
 	}
